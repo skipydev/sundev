@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="ru">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>VOIN — вместе мы сила</title>
+
+		<script
+			type="module"
+			src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.3.0/model-viewer.min.js"
+		></script>
+
+		<style>
+			:root {
+				--bg: #041208;
+				--text: #e1efe1;
+				--accent: #a8d5a2;
+				--accent-gold: #c5a47e;
+				--glass: rgba(255, 255, 255, 0.04);
+				--glass-border: rgba(255, 255, 255, 0.1);
+				--grid-line: rgba(168, 213, 162, 0.04);
+
+				/* ВЯЗКИЕ ТАЙМИНГИ (Медленнее) */
+				--slow: 1s cubic-bezier(0.19, 1, 0.22, 1);
+				--v-slow: 1.8s cubic-bezier(0.19, 1, 0.22, 1);
+			}
+
+			* {
+				margin: 0;
+				padding: 0;
+				box-sizing: border-box;
+			}
+			html {
+				scroll-behavior: smooth;
+			}
+
+			body {
+				font-family: 'Inter', sans-serif;
+				background-color: var(--bg);
+				color: var(--text);
+				line-height: 1.6;
+				overflow-x: hidden;
+				/* СЕТКА НА ФОНЕ */
+				background-image: linear-gradient(var(--grid-line) 1px, transparent 1px),
+					linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+				background-size: 60px 60px;
+			}
+
+			#scroll-bar {
+				position: fixed;
+				top: 0;
+				left: 0;
+				height: 5px;
+				background: linear-gradient(90deg, var(--accent), var(--accent-gold));
+				width: 0%;
+				z-index: 9999;
+			}
+
+			header {
+				position: fixed;
+				top: 25px;
+				left: 50%;
+				transform: translateX(-50%);
+				width: 95%;
+				max-width: 1500px;
+				padding: 18px 45px;
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				background: var(--glass);
+				backdrop-filter: blur(25px);
+				border: 1px solid var(--glass-border);
+				border-radius: 30px;
+				z-index: 1000;
+				box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+				transition: var(--slow);
+			}
+
+			.logo {
+				font-weight: 900;
+				font-size: 1.6rem;
+				color: var(--accent);
+				letter-spacing: -1.5px;
+			}
+			nav a {
+				text-decoration: none;
+				color: var(--text);
+				margin-left: 30px;
+				font-weight: 600;
+				font-size: 0.8rem;
+				text-transform: uppercase;
+				transition: var(--slow);
+				opacity: 0.5;
+			}
+			nav a:hover {
+				opacity: 1;
+				color: var(--accent);
+				transform: translateY(-2px);
+			}
+
+			section {
+				padding: 100px 5%;
+				max-width: 1500px;
+				margin: 0 auto;
+			}
+
+			.glass-card {
+				background: var(--glass);
+				backdrop-filter: blur(25px);
+				border: 1px solid var(--glass-border);
+				border-radius: 40px;
+				padding: 60px;
+				transition: var(--slow);
+			}
+			.glass-card:hover {
+				transform: translateY(-12px) scale(1.01);
+				background: rgba(168, 213, 162, 0.08);
+				border-color: var(--accent);
+			}
+
+			.hero {
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				gap: 60px;
+				padding-top: 180px;
+				min-height: 90vh;
+				align-items: center;
+			}
+			.hero h1 {
+				font-size: clamp(3rem, 7vw, 6rem);
+				line-height: 0.85;
+				letter-spacing: -4px;
+			}
+			.hero-stats {
+				display: flex;
+				gap: 40px;
+				margin-top: 50px;
+			}
+			.stat-item b {
+				font-size: 2.5rem;
+				color: var(--accent);
+				display: block;
+			}
+
+			.model-stage {
+				height: 600px;
+				position: relative;
+				cursor: grab;
+			}
+			model-viewer {
+				width: 100%;
+				height: 100%;
+			}
+
+			.bento {
+				display: grid;
+				grid-template-columns: repeat(4, 1fr);
+				gap: 20px;
+			}
+			.bento-big {
+				grid-column: span 2;
+				grid-row: span 2;
+			}
+			.bento-wide {
+				grid-column: span 2;
+			}
+
+			.photo-grid {
+				display: grid;
+				grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+				gap: 30px;
+			}
+			.photo-card {
+				height: 450px;
+				border-radius: 30px;
+				overflow: hidden;
+				position: relative;
+				border: 1px solid var(--glass-border);
+				transition: var(--slow);
+			}
+			.photo-card img {
+				width: 100%;
+				height: 100%;
+				object-fit: cover;
+				filter: grayscale(0.6) brightness(0.6) blur(2px);
+				transition: var(--v-slow);
+			}
+			.photo-card:hover img {
+				filter: grayscale(0) brightness(1.1) blur(0px);
+				transform: scale(1.1);
+			}
+			.photo-card:hover {
+				transform: scale(0.98);
+			}
+
+			.timeline {
+				display: grid;
+				grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+				gap: 20px;
+			}
+			.time-box {
+				border-top: 1px solid var(--accent);
+				padding-top: 20px;
+				transition: var(--slow);
+			}
+			.time-box:hover {
+				color: var(--accent);
+				padding-top: 35px;
+			}
+
+			.hub-section {
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				gap: 60px;
+				align-items: center;
+			}
+
+			.steps {
+				display: grid;
+				grid-template-columns: repeat(4, 1fr);
+				gap: 20px;
+				text-align: center;
+			}
+			.step-num {
+				width: 60px;
+				height: 60px;
+				background: var(--accent);
+				color: var(--bg);
+				border-radius: 50%;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				margin: 0 auto 20px;
+				font-weight: 900;
+				transition: var(--slow);
+			}
+			.glass-card:hover .step-num {
+				transform: rotateY(180deg);
+				background: var(--accent-gold);
+			}
+
+			.faq-item {
+				border-radius: 20px;
+				background: var(--glass);
+				border: 1px solid var(--glass-border);
+				margin-bottom: 15px;
+				overflow: hidden;
+			}
+			.faq-header {
+				padding: 30px;
+				cursor: pointer;
+				font-weight: 800;
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+			}
+			.faq-header::after {
+				content: '+';
+				font-size: 1.5rem;
+				transition: 0.5s;
+				color: var(--accent);
+			}
+			.faq-item.active .faq-header::after {
+				transform: rotate(45deg);
+			}
+			.faq-body {
+				max-height: 0;
+				overflow: hidden;
+				padding: 0 30px;
+				transition: max-height 0.8s cubic-bezier(0.4, 0, 0.2, 1), padding 0.5s;
+				opacity: 0;
+				color: #accab0;
+			}
+			.faq-item.active .faq-body {
+				max-height: 400px;
+				padding-bottom: 30px;
+				opacity: 1;
+			}
+
+			.btn {
+				padding: 22px 50px;
+				background: var(--accent);
+				color: var(--bg);
+				border-radius: 100px;
+				text-decoration: none;
+				font-weight: 800;
+				display: inline-block;
+				transition: var(--slow);
+				border: none;
+				cursor: pointer;
+				text-transform: uppercase;
+			}
+			.btn:hover {
+				transform: scale(1.08);
+				box-shadow: 0 20px 40px rgba(168, 213, 162, 0.3);
+			}
+			@keyframes levitate {
+				0% {
+					transform: translateY(0);
+				}
+				50% {
+					transform: translateY(-20px);
+				} /* Подъем на 20 пикселей */
+				100% {
+					transform: translateY(0);
+				}
+			}
+
+			.levitating-model {
+				animation: levitate 4s ease-in-out infinite;
+				filter: drop-shadow(
+					0 20px 50px rgba(168, 213, 162, 0.2)
+				); /* Мягкое свечение под моделью */
+			}
+
+			model-viewer#voin-model {
+				--poster-color: transparent;
+				background-color: transparent;
+			}
+
+			footer {
+				background: #020a04;
+				border-top: 1px solid var(--accent);
+				padding: 80px 5%;
+				border-radius: 60px 60px 0 0;
+			}
+
+			.reveal {
+				opacity: 0;
+				transform: translateY(60px);
+				transition: 1.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+			}
+			.reveal.active {
+				opacity: 1;
+				transform: translateY(0);
+			}
+		</style>
+	</head>
+	<body>
+		<div id="scroll-bar"></div>
+
+		<header>
+			<div class="logo">VOIN</div>
+			<nav>
+				<a href="#hero">Проект</a>
+				<a href="#gallery">Природа</a>
+				<a href="#tech">Системы</a>
+				<a href="#path">Получение</a>
+				<a href="#booking">Заявка</a>
+			</nav>
+			<a
+				href="#booking"
+				class="btn"
+				style="padding: 12px 25px; font-size: 0.75rem"
+				>Присоединиться</a
+			>
+		</header>
+
+		
+		<section class="hero" id="hero">
+			<div class="reveal">
+				<h1>
+					Путь<br />
+					<span style="color: var(--accent)">к восстановлению</span>
+				</h1>
+				<p
+					style="
+						font-size: 1.3rem;
+						margin-top: 30px;
+						opacity: 0.7;
+						max-width: 550px;
+					"
+				>
+					Первоклассные медики и близость к природе, сделают вас самым
+					счастливым человеком на земле
+				</p>
+				<div class="hero-stats">
+					<div class="stat-item"><b>150+</b> гостей в месяц</div>
+					<div class="stat-item"><b>100+</b> положительных отзывов</div>
+				</div>
+				<br /><br />
+				<a href="#booking" class="btn">Стать частью</a>
+			</div>
+			<div class="model-stage levitating-model reveal">
+				<model-viewer
+					id="voin-model"
+					src="san.glb"
+					alt="Voin Architecture"
+					auto-rotate
+					camera-controls
+					shadow-intensity="1"
+					exposure="1"
+					environment-image="neutral"
+					auto-rotate-delay="0"
+					rotation-per-second="30deg"
+				>
+			
+				</model-viewer>
+			</div>
+		</section>
+
+		
+		<section id="gallery" class="reveal">
+			<h2 style="font-size: 3rem; margin-bottom: 50px">Природный ареал</h2>
+			<div class="photo-grid">
+				<div class="photo-card">
+					<img
+						src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=1200&q=80"
+					/>
+				</div>
+				<div class="photo-card">
+					<img
+						src="https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=1200&q=80"
+					/>
+				</div>
+				<div class="photo-card">
+					<img
+						src="https://images.unsplash.com/photo-1511497584788-876760111969?auto=format&fit=crop&w=1200&q=80"
+					/>
+				</div>
+			</div>
+		</section>
+
+		
+		<section id="tech" class="reveal">
+			<div class="bento">
+				<div
+					class="glass-card bento-big"
+					style="background: var(--accent); color: var(--bg)"
+				>
+					<h2 style="color: var(--bg)">Огромная территория</h2>
+					<p style="margin-top: 20px; font-size: 1.1rem">
+						Обширная территория послужит ключом к вашему хорошему настроению и
+						крепкому здоровью.
+					</p>
+				</div>
+				<div class="glass-card bento-wide">
+					<h3>Минерализированная вода</h3>
+					<p>Минерализация на молекулярном уровне.</p>
+				</div>
+				<div class="glass-card">
+					<h3>Свежий воздух</h3>
+					<p>Возду тайги 24/7</p>
+				</div>
+				<div class="glass-card">
+					<h3>Соляные ванны</h3>
+					<p>Максимальная реабилитация и комфорт</p>
+				</div>
+			</div>
+		</section>
+
+		
+		<section class="reveal">
+			<div class="glass-card">
+				<h2 style="margin-bottom: 40px">24 часа в Voin</h2>
+				<div class="timeline">
+					<div class="time-box"><b>08:00</b> Пробуждение + зарядка</div>
+					<div class="time-box"><b>11:00</b> Спортивыне игры</div>
+					<div class="time-box"><b>14:00</b> Лесная тихая терапия</div>
+					<div class="time-box"><b>19:00</b> Рецепция знаний в лектории</div>
+				</div>
+			</div>
+		</section>
+
+		<section class="hub-section reveal">
+			<div class="glass-card">
+				<h2>Пространоство</h2>
+				<p style="margin-top: 20px">
+					Панорамный вид на тайгу, с чистейшим воздухом
+				</p>
+			</div>
+			<div class="photo-card" style="height: 500px">
+				<img src="/image/1.jpg" />
+			</div>
+		</section>
+
+		<!-- 6. ПИТАНИЕ + ФЕРМЫ -->
+		<section class="reveal">
+			<div
+				class="glass-card"
+				style="
+					display: grid;
+					grid-template-columns: 7fr 1fr;
+					gap: 60px;
+					background: rgb(11, 26, 12);
+					color: rgba(255, 255, 255, 0.555);
+				"
+			>
+				<div
+					style="
+						background: url('/image/3.jpg');
+						border-radius: 20px;
+						background-size: cover;
+					"
+				></div>
+				<div>
+					<h2 style="color: var(--accent)">Питание высшего класса</h2>
+					<p>
+						Мы выращиваем всё сами. Натуральнее наших ингридиентов, только слеза
+						младенца
+					</p>
+					<br />
+					<b>100% Zero-Pesticide</b><br />
+					<b>Доставка за 5 минут</b>
+				</div>
+			</div>
+		</section>
+
+		<section class="reveal">
+			<div class="glass-card" style="text-align: center">
+				<h2 style="font-size: 3rem">Тренажерный зал</h2>
+				<p style="margin: 20px 0">
+					Более 50 различных тренажеров для всех групп мышц. Программы от наших
+					тренеров помогут вам быстро восстановиться и прокачать физ. состояние
+				</p>
+				<div class="photo-card" style="height: 300px">
+					<img src="/image/4.jpg" />
+				</div>
+			</div>
+		</section>
+
+	
+		<section id="path" class="reveal">
+			<h2 style="text-align: center; margin-bottom: 50px">
+				4 Шага к результату
+			</h2>
+			<div class="steps">
+				<div class="glass-card">
+					<div class="step-num">01</div>
+					<b>Данные</b><br /><small>Заяка</small>
+				</div>
+				<div class="glass-card">
+					<div class="step-num">02</div>
+					<b>Медицина</b><br /><small>ИИ-Скрининг здоровья</small>
+				</div>
+				<div class="glass-card">
+					<div class="step-num">03</div>
+					<b>Заявка</b><br /><small>Выделение аппартаментов</small>
+				</div>
+				<div class="glass-card">
+					<div class="step-num">04</div>
+					<b>Заезд</b><br /><small>Личный трансфер</small>
+				</div>
+			</div>
+		</section>
+
+		<!-- 9. НАУКА + FAQ ПЛАВНЫЙ -->
+		<section class="reveal">
+			<div class="glass-card">
+				<h2>ЧаВо (FAQ)</h2>
+				<br />
+				<div class="faq-container">
+					<div class="faq-item">
+						<div class="faq-header">
+							Что такое реабилитационный центр «Воин»?
+						</div>
+						<div class="faq-body">
+							Реабилитационный центр «Воин» — это специализированное учреждение,
+							предназначенное для комплексного восстановления физического и
+							психологического состояния пациентов после травм, заболеваний и
+							стрессовых нагрузок.
+						</div>
+					</div>
+					<div class="faq-item">
+						<div class="faq-header">Для кого предназначен центр?</div>
+						<div class="faq-body">
+							Центр ориентирован на участников специальной военной операции,
+							нуждающихся в медицинской, физической и психологической
+							реабилитации, а также в комфортных условиях проживания в период
+							восстановления.
+						</div>
+					</div>
+					<div class="faq-item">
+						<div class="faq-header">
+							Можно ли ознакомиться с центром до начала реабилитации?
+						</div>
+						<div class="faq-body">
+							Да, на сайте центра доступна информация о структуре комплекса, а
+							также интерактивная 3D-модель, позволяющая ознакомиться с
+							архитектурным решением и планировкой территории.
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- 10. ФИНАЛЬНАЯ ЗАЯВКА -->
+		<section id="booking" class="reveal">
+			<div class="glass-card" style="text-align: center">
+				<h2 style="font-size: 4rem; letter-spacing: -3px">VOIN — Начало</h2>
+				<p>Станьте частью программы прямо сейчас.</p>
+				<form style="max-width: 500px; margin: 40px auto 0">
+					<input
+						type="text"
+						placeholder="ФИО пациента"
+						style="
+							width: 100%;
+							padding: 20px;
+							border-radius: 15px;
+							margin-bottom: 10px;
+							border: 1px solid var(--glass-border);
+							background: var(--glass);
+							color: white;
+						"
+					/>
+					<input
+						type="tel"
+						placeholder="Почта, пример: example@mail.com"
+						style="
+							width: 100%;
+							padding: 20px;
+							border-radius: 15px;
+							margin-bottom: 20px;
+							border: 1px solid var(--glass-border);
+							background: var(--glass);
+							color: white;
+						"
+					/>
+					<button type="button" class="btn" style="width: 100%">
+						Отправить в Центр Обработки
+					</button>
+				</form>
+			</div>
+		</section>
+
+		<footer>
+			<div
+				style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px"
+			>
+				<div>
+					<h2 style="color: var(--accent)">VOIN</h2>
+					<p style="opacity: 0.5">Экосистема федерального оздоровления.</p>
+				</div>
+				<div>
+					<h4>Центр</h4>
+					<p>Медицина</p>
+					<p>Ресторан</p>
+				</div>
+				<div>
+					<h4>Помощь</h4>
+					<p>8 800 500 00</p>
+					<p>Госуслуги РФ</p>
+				</div>
+				<div>
+					<h4>Досуг</h4>
+					<p>Тренажерный зал</p>
+					<p>Фитнес прогулки</p>
+				</div>
+			</div>
+			<hr style="margin-top: 50px; opacity: 0.1" />
+			<p style="text-align: center; margin-top: 20px; opacity: 0.3">
+				© 2026 Voin Resort
+			</p>
+		</footer>
+
+		<script>
+			// Прогресс бар
+			window.addEventListener('scroll', () => {
+				let winScroll =
+					document.body.scrollTop || document.documentElement.scrollTop
+				let height =
+					document.documentElement.scrollHeight -
+					document.documentElement.clientHeight
+				document.getElementById('scroll-bar').style.width =
+					(winScroll / height) * 100 + '%'
+
+				// Анимация Reveal
+				document.querySelectorAll('.reveal').forEach(rev => {
+					let revealTop = rev.getBoundingClientRect().top
+					if (revealTop < window.innerHeight - 100) rev.classList.add('active')
+				})
+			})
+
+			// FAQ Медленное перетекание
+			document.querySelectorAll('.faq-header').forEach(header => {
+				header.addEventListener('click', () => {
+					let item = header.parentElement
+					document.querySelectorAll('.faq-item').forEach(i => {
+						if (i !== item) i.classList.remove('active')
+					})
+					item.classList.toggle('active')
+				})
+			})
+
+			// Первый экран сразу активен
+			window.onload = () => {
+				document.querySelector('.hero').classList.add('active')
+			}
+		</script>
+	</body>
+</html>
