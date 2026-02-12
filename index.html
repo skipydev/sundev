@@ -20,7 +20,6 @@
 				--glass-border: rgba(255, 255, 255, 0.1);
 				--grid-line: rgba(168, 213, 162, 0.04);
 
-				/* ВЯЗКИЕ ТАЙМИНГИ (Медленнее) */
 				--slow: 1s cubic-bezier(0.19, 1, 0.22, 1);
 				--v-slow: 1.8s cubic-bezier(0.19, 1, 0.22, 1);
 			}
@@ -40,7 +39,7 @@
 				color: var(--text);
 				line-height: 1.6;
 				overflow-x: hidden;
-				/* СЕТКА НА ФОНЕ */
+			
 				background-image: linear-gradient(var(--grid-line) 1px, transparent 1px),
 					linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
 				background-size: 60px 60px;
@@ -148,7 +147,7 @@
 				cursor: grab;
 			}
 			model-viewer {
-				width: 100%;
+				width: 200%;
 				height: 100%;
 			}
 
@@ -300,7 +299,7 @@
 				}
 				50% {
 					transform: translateY(-20px);
-				} /* Подъем на 20 пикселей */
+				} 
 				100% {
 					transform: translateY(0);
 				}
@@ -310,7 +309,7 @@
 				animation: levitate 4s ease-in-out infinite;
 				filter: drop-shadow(
 					0 20px 50px rgba(168, 213, 162, 0.2)
-				); /* Мягкое свечение под моделью */
+				); 
 			}
 
 			model-viewer#voin-model {
@@ -334,16 +333,219 @@
 				opacity: 1;
 				transform: translateY(0);
 			}
+
+			.burger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  z-index: 1100;
+}
+
+.burger span {
+  width: 24px;
+  height: 2px;
+  background: var(--text);
+  transition: 0.3s;
+}
+
+
+@media (max-width: 768px) {
+
+  .desktop-nav {
+    display: none;
+  }
+
+  .burger {
+    display: flex;
+  }
+
+}
+.mobile-menu {
+  position: fixed;
+  top: 0;
+  right: -100%;
+  width: 260px;
+  height: 100vh;
+  background: #021006;
+  padding: 100px 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  transition: 0.4s ease;
+  z-index: 1050;
+  box-shadow: -10px 0 40px rgba(0,0,0,0.6);
+}
+
+.mobile-menu a {
+  color: var(--text);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.mobile-menu.active {
+  right: 0;
+}
+
+
+.menu-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  opacity: 0;
+  pointer-events: none;
+  transition: 0.3s;
+  z-index: 1000;
+}
+
+.menu-overlay.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+			@media (max-width: 992px) {
+        header {
+					position: fixed;
+					top: 15 !important;
+					left: 0 !important;
+					right: 0 !important;
+					transform: none !important;
+					width: auto;
+					max-width: auto !important;
+					box-sizing: border-box !important;
+
+          padding: 12px 26px;
+          border-radius: 20px;
+
+        }
+
+        nav {
+          display: none; 
+        }
+
+  section {
+    padding: 80px 6%;
+  }
+
+  .hero {
+    grid-template-columns: 1fr;
+    gap: 40px;
+    padding-top: 140px;
+    text-align: center;
+  }
+
+  .hero h1 {
+    font-size: clamp(2.2rem, 8vw, 3.5rem);
+    letter-spacing: -2px;
+  }
+
+  .hero-stats {
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+  }
+
+  .model-stage {
+    height: 380px;
+  }
+
+  model-viewer {
+    width: 100%;
+  }
+
+  .bento {
+    grid-template-columns: 1fr;
+  }
+
+  .bento-big,
+  .bento-wide {
+    grid-column: span 2;
+  }
+
+  .hub-section {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  .steps {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .glass-card {
+    padding: 35px;
+    border-radius: 25px;
+  }
+
+  .photo-card {
+    height: 320px;
+  }
+
+  .faq-header {
+    padding: 20px;
+    font-size: 0.95rem;
+  }
+
+  .btn {
+    padding: 18px 35px;
+    font-size: 0.8rem;
+  }
+
+  footer {
+    padding: 60px 6%;
+    border-radius: 30px 30px 0 0;
+  }
+}
+@media (max-width: 600px) {
+
+  .logo {
+    font-size: 1.2rem;
+  }
+
+  .hero h1 {
+    font-size: 2rem;
+    line-height: 1;
+  }
+
+  .bento {
+    grid-template-columns: 1fr;
+  }
+
+  .steps {
+    grid-template-columns: 1fr;
+  }
+
+  .timeline {
+    grid-template-columns: 1fr;
+  }
+
+  .photo-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .model-stage {
+    height: 320px;
+  }
+
+  .glass-card {
+    padding: 25px;
+  }
+
+  .faq-body {
+    padding: 0 20px;
+  }
+}
+
 		</style>
 	</head>
 	<body>
 		<div id="scroll-bar"></div>
 
 		<header>
-			<div class="logo">VOIN</div>
+			<div class="logo" href='#hero'> VOIN</div>
 			<nav>
 				<a href="#hero">Проект</a>
-				<a href="#gallery">Природа</a>
+				<a href="#gallery">Пространство</a>
 				<a href="#tech">Системы</a>
 				<a href="#path">Получение</a>
 				<a href="#booking">Заявка</a>
@@ -400,21 +602,21 @@
 		</section>
 
 		<section id="gallery" class="reveal">
-			<h2 style="font-size: 3rem; margin-bottom: 50px">Природный ареал</h2>
+			<h2 style="font-size: 3rem; margin-bottom: 50px">Красота в мелочах.</h2>
 			<div class="photo-grid">
 				<div class="photo-card">
 					<img
-						src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=1200&q=80"
+						src="image/5.jpg"
 					/>
 				</div>
 				<div class="photo-card">
 					<img
-						src="https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=1200&q=80"
+						src="image/6.jpg"
 					/>
 				</div>
 				<div class="photo-card">
 					<img
-						src="https://images.unsplash.com/photo-1511497584788-876760111969?auto=format&fit=crop&w=1200&q=80"
+						src="image/7.jpg"
 					/>
 				</div>
 			</div>
@@ -471,30 +673,27 @@
 			</div>
 		</section>
 
-		<!-- 6. ПИТАНИЕ + ФЕРМЫ -->
+
 		<section class="reveal">
 			<div
 				class="glass-card"
 				style="
 					display: grid;
-					grid-template-columns: 7fr 1fr;
+					text-align:center;
 					gap: 60px;
 					background: rgb(11, 26, 12);
 					color: rgba(255, 255, 255, 0.555);
+					font-size: 1,5rem;
+					
 				"
 			>
-				<div
-					style="
-						background: url('image/3.jpg');
-						border-radius: 20px;
-						background-size: cover;
-					"
-				></div>
+				<div class="photo-card" style="height: 500px">
+					<img src="image/3.jpg" />
+				</div>
 				<div>
 					<h2 style="color: var(--accent)">Питание высшего класса</h2>
 					<p>
-						Мы выращиваем всё сами. Натуральнее наших ингридиентов, только слеза
-						младенца
+						Мы выращиваем всё сами.Учитываем диетические предпочтения и ограничения: веганство, безглютеновая диета, низкоуглеводные рационы и др. Каждое блюдо — это персонализированный гастрономический опыт.
 					</p>
 					<br />
 					<b>100% Zero-Pesticide</b><br />
@@ -540,7 +739,7 @@
 			</div>
 		</section>
 
-		<!-- 9. НАУКА + FAQ ПЛАВНЫЙ -->
+		
 		<section class="reveal">
 			<div class="glass-card">
 				<h2>ЧаВо (FAQ)</h2>
@@ -624,24 +823,20 @@
 				style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px"
 			>
 				<div>
-					<h2 style="color: var(--accent)">VOIN</h2>
+					<h2 style="color: var(--accent)" href='#hero'>VOIN</h2>
 					<p style="opacity: 0.5">Экосистема федерального оздоровления.</p>
 				</div>
-				<div>
+				<div style='color:gray'>
 					<h4>Центр</h4>
-					<p>Медицина</p>
+					<p>Медицина</></p>
 					<p>Ресторан</p>
 				</div>
-				<div>
+				<div style='color:gray'>
 					<h4>Помощь</h4>
 					<p>8 800 500 00</p>
 					<p>Госуслуги РФ</p>
 				</div>
-				<div>
-					<h4>Досуг</h4>
-					<p>Тренажерный зал</p>
-					<p>Фитнес прогулки</p>
-				</div>
+				
 			</div>
 			<hr style="margin-top: 50px; opacity: 0.1" />
 			<p style="text-align: center; margin-top: 20px; opacity: 0.3">
@@ -650,7 +845,7 @@
 		</footer>
 
 		<script>
-			// Прогресс бар
+
 			window.addEventListener('scroll', () => {
 				let winScroll =
 					document.body.scrollTop || document.documentElement.scrollTop
@@ -660,14 +855,12 @@
 				document.getElementById('scroll-bar').style.width =
 					(winScroll / height) * 100 + '%'
 
-				// Анимация Reveal
 				document.querySelectorAll('.reveal').forEach(rev => {
 					let revealTop = rev.getBoundingClientRect().top
 					if (revealTop < window.innerHeight - 100) rev.classList.add('active')
 				})
 			})
 
-			// FAQ Медленное перетекание
 			document.querySelectorAll('.faq-header').forEach(header => {
 				header.addEventListener('click', () => {
 					let item = header.parentElement
@@ -678,7 +871,6 @@
 				})
 			})
 
-			// Первый экран сразу активен
 			window.onload = () => {
 				document.querySelector('.hero').classList.add('active')
 			}
